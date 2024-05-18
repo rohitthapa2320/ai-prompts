@@ -6,12 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import ProfileInfo from '@components/ProfileInfo';
 
- const Loading = () => {
-    return(
-      <div>Laoding...</div>
-    )
-  }
-
 const Profile = () => {
   const { data: session } = useSession();
   const [ prompts, setPrompts ] = useState([]);
@@ -60,16 +54,13 @@ const Profile = () => {
     }
   }
   return(
-    <Suspense fallback={<Loading />}>
-      <ProfileInfo
-        name={userId===session?.user.id?"My": name}
-        desc={`Welcome to ${userId===session?.user.id?"My Personalised": name} Profile Page`}
-        data={prompts}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-      />
-    </Suspense>
-    
+    <ProfileInfo
+      name={userId===session?.user.id?"My": name}
+      desc={`Welcome to ${userId===session?.user.id?"My Personalised": name} Profile Page`}
+      data={prompts}
+      handleEdit={handleEdit}
+      handleDelete={handleDelete}
+    />
   )
 }
 
