@@ -51,11 +51,22 @@ const PromptCard = ({
         </div>
       </div>
       <p className='my-4 font-santoshi text-sm text-gray-700'>{prompt.prompt}</p>
-      <p className='font-inter text-sm blue_gradient cursor-pointer'
-        onClick={() =>{
-          handleTagClick(prompt.tag)
-        }}
-      >{prompt.tag}</p>
+      {
+        pathName==='/'?(
+        <p className='font-inter text-sm blue_gradient cursor-pointer'
+          onClick={() =>{
+            handleTagClick(prompt.tag)
+          }}
+        >
+          {prompt.tag}
+        </p>
+        ):(
+        <p className='font-inter text-sm blue_gradient'
+        >
+          {prompt.tag}
+        </p>
+        )
+      }
 
       {
         session?.user.id === prompt.creator._id && pathName === '/profile' && (
