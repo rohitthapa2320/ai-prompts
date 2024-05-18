@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -54,13 +54,16 @@ const Profile = () => {
     }
   }
   return(
-    <ProfileInfo
-      name={userId===session?.user.id?"My": name}
-      desc={`Welcome to ${userId===session?.user.id?"My Personalised": name} Profile Page`}
-      data={prompts}
-      handleEdit={handleEdit}
-      handleDelete={handleDelete}
-    />
+    <Suspense>
+      <ProfileInfo
+        name={userId===session?.user.id?"My": name}
+        desc={`Welcome to ${userId===session?.user.id?"My Personalised": name} Profile Page`}
+        data={prompts}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+      />
+    </Suspense>
+    
   )
 }
 
