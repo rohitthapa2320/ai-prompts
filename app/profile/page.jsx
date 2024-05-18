@@ -2,25 +2,36 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import ProfileInfo from '@components/ProfileInfo';
 
 const Profile = () => {
   const { data: session } = useSession();
   const [ prompts, setPrompts ] = useState([]);
+  const [name, setName]= useState("");
 
   const router= useRouter();
+  const searchParams= useSearchParams();
+
+  const userId= searchParams.get('userId');
 
   useEffect(()=> {
     const fetchPrompts = async () => {
-      const response = await fetch(`/api/users/${session?.user.id}/prompts`);
+      const response = await fetch(`/api/users/${userId}/prompts`);
       const data= await response.json();
 
       setPrompts(data);
     }
-    if(session?.user.id){
+    const fetchUserProfileInfo = async() => {
+      const response = await fetch(`/api/profile/${userId}`);
+      const data= await response.json();
+      const {username}= data;
+      setName(username);
+    }
+    if(userId){
       fetchPrompts();
+      fetchUserProfileInfo();
     }
     
   },[])
@@ -44,8 +55,8 @@ const Profile = () => {
   }
   return(
     <ProfileInfo
-      name="My"
-      desc="Welcome to your personalised profile page"
+      name={userId===session?.user.id?"My": name}
+      desc={`Welcome to ${userId===session?.user.id?"My Personalised": name} Profile Page`}
       data={prompts}
       handleEdit={handleEdit}
       handleDelete={handleDelete}

@@ -4,9 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const { data: session } = useSession();
+  const router= useRouter();
 
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
@@ -17,6 +19,17 @@ const Navbar = () => {
       setProviders(res);
     })();
   }, []);
+
+  const handleDesktopSignOut = async () => {
+    const data = await signOut({redirect:false, callbackUrl:"/"});
+    router.push(data.url);
+  }
+
+  const handleMobileSignOut = async () => {
+    setToggleDropdown(false)
+    const data = await signOut({redirect:false, callbackUrl:"/"});
+    router.push(data.url);
+  }
 
   return (
     <nav className='flex-between w-full mb-16 pt-3'>
@@ -39,11 +52,11 @@ const Navbar = () => {
               Create Post
             </Link>
 
-            <button type='button' onClick={signOut} className='outline_btn'>
+            <button type='button' onClick={handleDesktopSignOut} className='outline_btn'>
               Sign Out
             </button>
 
-            <Link href='/profile'>
+            <Link href={`/profile?userId=${session?.user.id}`}>
               <Image
                 src={session?.user.image}
                 width={37}
@@ -88,7 +101,7 @@ const Navbar = () => {
             {toggleDropdown && (
               <div className='dropdown'>
                 <Link
-                  href='/profile'
+                  href={`/profile?userId=${session?.user.id}`}
                   className='dropdown_link'
                   onClick={() => setToggleDropdown(false)}
                 >
@@ -103,10 +116,7 @@ const Navbar = () => {
                 </Link>
                 <button
                   type='button'
-                  onClick={() => {
-                    setToggleDropdown(false);
-                    signOut();
-                  }}
+                  onClick={handleMobileSignOut}
                   className='mt-5 w-full black_btn'
                 >
                   Sign Out
