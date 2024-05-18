@@ -24,11 +24,36 @@ const PromptCardList = ({
 }
 
 const Feed = () => {
-  const [ searchText, setSearchText] = useState('');
   const [ prompts, setPrompts] = useState([]);
 
-  const handleSearchChange = (e) => {
+  const [ searchText, setSearchText] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [ searchResults, setSearchResults ] = useState([]);
 
+  const filteredPrompts = (searchText) => {
+    const regex= new RegExp(searchText,"i");
+
+    return prompts.filter((item) => regex.test(item.creator.username) || regex.test(item.tag) || regex.test(item.prompt));
+  }
+  
+  const handleSearchChange = (e) => {
+    clearTimeout(searchTimeout);
+    setSearchText(e.target.value);
+    // debounce method
+    setSearchTimeout(
+      setTimeout(() => {
+        const results = filteredPrompts(e.target.value);
+        setSearchResults(results);
+      }, 500)
+    );
+  }
+
+  
+  const handleTagClick = (tagName) => {
+    setSearchText(tagName);
+
+    const results = filteredPrompts(tagName);
+    setSearchResults(results);
   }
 
   useEffect(()=> {
@@ -52,10 +77,19 @@ const Feed = () => {
           className='search_input peer'
         />
       </form>
-      <PromptCardList
-        data={prompts}
-        handleTagClick={() => {}}
-      />
+      {
+        searchText ? (
+          <PromptCardList
+            data={searchResults} 
+            handleTagClick={handleTagClick}
+          />
+        ):(
+          <PromptCardList
+            data={prompts} 
+            handleTagClick={handleTagClick}
+          />
+        )
+      }
     </section>
   )
 }

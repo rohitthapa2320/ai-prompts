@@ -52,7 +52,9 @@ const PromptCard = ({
       </div>
       <p className='my-4 font-santoshi text-sm text-gray-700'>{prompt.prompt}</p>
       <p className='font-inter text-sm blue_gradient cursor-pointer'
-        onClick={handleTagClick && handleTagClick(prompt.tag)}
+        onClick={() =>{
+          handleTagClick(prompt.tag)
+        }}
       >{prompt.tag}</p>
 
       {
